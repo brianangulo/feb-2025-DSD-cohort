@@ -4,7 +4,6 @@ import Grid from "@mui/material/Grid2";
 import api from "../api";
 import ApartmentTable from "../components/tables/ApartmentTable";
 import PendingLeasesTable from "../components/tables/PendingLeasesTable";
-import RenewLeaseTable from "../components/tables/RenewLeaseTable";
 
 const Dashboard = () => {
   const [expiredLeases, setExpiredLeases] = useState([]);
@@ -14,11 +13,11 @@ const Dashboard = () => {
     const fetchExpiredLeases = async () => {
       api
         .get("/api/dashboard/expiringLeases")
-        .then((res) => {
+        .then(res => {
           setExpiredLeases(res.data);
           setLoading(false);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
           setLoading(false);
         });
@@ -44,19 +43,19 @@ const Dashboard = () => {
             Upcoming Renewals
           </Typography>
           <Box border={"1px solid black"} bgcolor={"#f5f5f5"}>
-            <RenewLeaseTable />
+            <Typography>hello from left box</Typography>
 
-            {/* {loading ? (
+            {loading ? (
               <Typography>loading...</Typography>
             ) : expiredLeases.length === 0 ? (
               <Typography>no expired leases</Typography>
             ) : (
-              expiredLeases.map((lease) => (
+              expiredLeases.map(lease => (
                 <Box key={lease.id}>
                   <Typography>{lease.lease_end_date}</Typography>
                 </Box>
               ))
-            )} */}
+            )}
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
