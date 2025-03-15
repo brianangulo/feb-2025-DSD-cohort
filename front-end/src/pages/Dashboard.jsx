@@ -1,40 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import api from "../api";
+// import api from "../api";
 import ApartmentTable from "../components/tables/ApartmentTable";
 import PendingLeasesTable from "../components/tables/PendingLeasesTable";
 import RenewLeaseTable from "../components/tables/RenewLeaseTable";
 
+import { fetchApartmentInformation } from "../api/apartmentApi";
+import { fetchRenewals, fetchPending } from "../api/leaseApi";
 const Dashboard = () => {
-  const [expiredLeases, setExpiredLeases] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [renewableLeases, setRenewableLeases] = useState([]);
+  const [pendingLeases, setPendingLeases] = useState([]);
+  const [apartmentInfo, setApartmentInfo] = useState([]);
+  const [loadingDashboardData, setLoadingDashboardData] = useState(true);
   //fetches expired leases from backend
+
   useEffect(() => {
-    const fetchExpiredLeases = async () => {
-      api
-        .get("/api/dashboard/expiringLeases")
-        .then((res) => {
-          setExpiredLeases(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        });
-    };
-    setLoading(true);
-    fetchExpiredLeases();
+    async function InitialFetch() {
+      const [apartmentInformation, renewableInformation, pendingInformation] = await Promise.all([
+        fetchApartmentInformation(),
+        fetchRenewals(),
+        fetchPending(),
+      ]);
+      setApartmentInfo(apartmentInformation);
+      setRenewableLeases(renewableInformation);
+      setPendingLeases(pendingInformation);
+    }
+    setLoadingDashboardData(true);
+    InitialFetch();
+    setLoadingDashboardData(false);
   }, []);
   return (
     <>
-      <Typography
-        component="h1"
-        align="left"
-        fontWeight={"bold"}
-        fontSize={"2rem"}
-        marginBottom={"2rem"}
-      >
+      <Typography component="h1" align="left" fontWeight={"bold"} fontSize={"2rem"} marginBottom={"2rem"}>
         Dashboard
       </Typography>
 
@@ -44,19 +42,7 @@ const Dashboard = () => {
             Upcoming Renewals
           </Typography>
           <Box border={"1px solid black"} bgcolor={"#f5f5f5"}>
-            <RenewLeaseTable />
-
-            {/* {loading ? (
-              <Typography>loading...</Typography>
-            ) : expiredLeases.length === 0 ? (
-              <Typography>no expired leases</Typography>
-            ) : (
-              expiredLeases.map((lease) => (
-                <Box key={lease.id}>
-                  <Typography>{lease.lease_end_date}</Typography>
-                </Box>
-              ))
-            )} */}
+            <RenewLeaseTable isLoading={loadingDashboardData} renewableLeases={renewableLeases} />
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
@@ -64,7 +50,7 @@ const Dashboard = () => {
             Pending Leases
           </Typography>
           <Box border={"1px solid black"} bgcolor={"#f5f5f5"}>
-            <PendingLeasesTable />
+            <PendingLeasesTable isLoading={loadingDashboardData} pendingLeases={pendingLeases} />
           </Box>
         </Grid>
         <Grid size={{ xs: 12 }}>
@@ -72,7 +58,7 @@ const Dashboard = () => {
             Apartments Info
           </Typography>
           <Box border={"1px solid black"} bgcolor={"#f5f5f5"}>
-            <ApartmentTable />
+            <ApartmentTable isLoading={loadingDashboardData} apartmentInfo={apartmentInfo} />
           </Box>
         </Grid>
       </Grid>

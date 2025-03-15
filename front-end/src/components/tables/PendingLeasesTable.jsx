@@ -1,8 +1,8 @@
 import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
-
+import Spinner from "../Spinner";
 //Defining the columns
 const columns = [
   { field: "apartmentNumber", headerName: "Apt. #", flex: 1, minWidth: 150 },
@@ -21,54 +21,18 @@ const columns = [
   },
 ];
 
-//Temp dummy data
-const rows = [
-  {
-    id: 1,
-    apartmentNumber: 1205,
-    tenantName: "John Drake",
-    leaseEnd: "06/03/2025",
-  },
-  {
-    id: 2,
-    apartmentNumber: 805,
-    tenantName: "Max Verstappen",
-    leaseEnd: "07/10/2025",
-  },
-  {
-    id: 3,
-    apartmentNumber: 1210,
-    tenantName: "Sergio Perez",
-    leaseEnd: "07/11/2025",
-  },
-  {
-    id: 4,
-    apartmentNumber: 803,
-    tenantName: "Lando Norris",
-    leaseEnd: "09/02/2026",
-  },
-  {
-    id: 5,
-    apartmentNumber: 702,
-    tenantName: "Daniel Ricciardo",
-    leaseEnd: "10/03/2026",
-  },
-  {
-    id: 6,
-    apartmentNumber: 105,
-    tenantName: "Lance Stroll",
-    leaseEnd: "12/12/2027",
-  },
-];
-
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function PendingLeasesTable() {
+export default function PendingLeasesTable({ isLoading, pendingLeases }) {
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <Paper sx={{ height: 370, width: "100%" }}>
       <DataGrid
-        rows={rows}
-        columns={columns.map((col) => ({
+        rows={pendingLeases}
+        columns={columns.map(col => ({
           ...col,
           align: "center",
           headerAlign: "center",
@@ -80,6 +44,7 @@ export default function PendingLeasesTable() {
         disableColumnResize
         disableColumnSelector
         disableRowSelectionOnClick
+        localeText={{ noRowsLabel: "No pending leases" }}
       />
     </Paper>
   );

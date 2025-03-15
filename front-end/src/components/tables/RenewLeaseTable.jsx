@@ -1,6 +1,7 @@
 import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { Button, Paper } from "@mui/material";
+import { Button, Paper, Typography } from "@mui/material";
+import Spinner from "../Spinner";
 
 //Defining the columns
 const columns = [
@@ -20,36 +21,17 @@ const columns = [
   },
 ];
 
-//Temp dummy data
-const rows = [
-  {
-    id: 3,
-    apartmentNumber: 333,
-    tenantName: "Joke Sonyou",
-    leaseEnd: "04/01/2025",
-  },
-  {
-    id: 4,
-    apartmentNumber: 23,
-    tenantName: "Lando Norris",
-    leaseEnd: "04/12/2025",
-  },
-  {
-    id: 5,
-    apartmentNumber: 324,
-    tenantName: "Michael Schumacher",
-    leaseEnd: "03/24/2025",
-  },
-];
-
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function RenewLeaseTable() {
+export default function RenewLeaseTable({ isLoading, renewableLeases }) {
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <Paper sx={{ height: 370, width: "100%" }}>
       <DataGrid
-        rows={rows}
-        columns={columns.map((col) => ({
+        rows={renewableLeases}
+        columns={columns.map(col => ({
           ...col,
           align: "center",
           headerAlign: "center",
@@ -61,6 +43,7 @@ export default function RenewLeaseTable() {
         disableColumnResize
         disableColumnSelector
         disableRowSelectionOnClick
+        localeText={{ noRowsLabel: "No renewals currently" }}
       />
     </Paper>
   );
