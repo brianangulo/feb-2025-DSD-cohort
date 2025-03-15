@@ -85,16 +85,3 @@ export default function PendingLeasesTable() {
   );
 }
 
-// const PendingLeasesTable = () => {
-//     return (
-//         <div style={{ height: 300, width: "100%" }}>
-//             <DataGrid
-//               rows={rows}
-//               columns={columns}
-//               disableRowSelectionOnClick
-//               pageSize={5}
-//               rowsPerPageOptions={[5]}
-//             />
-//         </div>
-//     )
-// }
