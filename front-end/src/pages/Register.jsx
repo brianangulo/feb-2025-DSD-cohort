@@ -1,37 +1,36 @@
-import React from "react";
+import { Grid2, Typography } from "@mui/material";
+import apartmentPhoto from "../assets/ApartmentPhoto.jpeg";
 
-import { Box } from "@mui/material";
-import Grid from "@mui/material/Grid2";
-import styled from "@mui/system/styled";
+
 import SignupForm from "../components/SignupForm";
-
-import placeholder from "../assets/placeholder.jpg";
-
-const Item = styled("div")(({ theme }) => ({
-  backgroundColor: "#fff",
-  border: "1px solid",
-  borderColor: "#ced7e0",
-  padding: theme.spacing(1),
-  borderRadius: "4px",
-  textAlign: "center",
-  ...theme.applyStyles("dark", {
-    backgroundColor: "#1A2027",
-    borderColor: "#444d58",
-  }),
-})); 
 
 const Register = () => {
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <img src={placeholder} alt="" width={"100%"} />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+    <Grid2 container spacing={2} padding={2} className="min-h-screen">
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <img
+          src={apartmentPhoto}
+          alt="A stylish urban apartment building with large glass windows and balconies, surrounded by tall, leafy green trees. The building has a sleek, contempora.webp"
+          className="h-full object-cover"
+        />
+      </Grid2>
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <div className="h-full flex flex-col items-center justify-center bg-slate-500 p-6">
+          <Typography
+            component="h1"
+            sx={{
+              fontWeight: "bold",
+              fontSize: "2rem",
+              color: "white",
+              marginBottom: "1rem",
+            }}
+          >
+            Signup
+          </Typography>
           <SignupForm />
-        </Grid>
-      </Grid>
-    </Box>
+        </div>
+      </Grid2>
+    </Grid2>
   );
 };
 

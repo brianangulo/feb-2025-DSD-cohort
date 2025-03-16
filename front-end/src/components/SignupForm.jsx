@@ -5,13 +5,14 @@ import {
   Button,
   IconButton,
   InputAdornment,
+  Link,
   Stack,
   TextField,
 } from "@mui/material";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 import api from "../api";
 
 const SignupForm = () => {
@@ -61,7 +62,7 @@ const SignupForm = () => {
     <form
       noValidate
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-gray-100 border border-gray-300 max-w-md p-8 rounded-xl"
+      className="bg-gray-100 border border-gray-300 p-8 rounded-xl max-w-md  xl:w-sm"
     >
       <Stack spacing={2}>
         <TextField
@@ -156,11 +157,15 @@ const SignupForm = () => {
 
         <Button
           type="submit"
+          variant="contained"
           disabled={isSubmitting || Object.keys(errors).length > 0}
         >
           {isSubmitting ? "Submitting..." : "Create new account"}
         </Button>
       </Stack>
+      <p className="mt-4 text-center">
+        Already have an account? <Link href="/">Login</Link>
+      </p>
     </form>
   );
 };
