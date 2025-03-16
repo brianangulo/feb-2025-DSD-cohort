@@ -63,7 +63,8 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  return next(new Error("Unauthorized"));
+  // return next(new Error("Unauthorized"));
+  return res.json({user: null});
 }
 
 module.exports = app;

@@ -5,7 +5,8 @@ router.get("/", (req, res, next) => {
   if (req.isAuthenticated()) {
     return res.status(200).json({ user: req.user });
   }
-  return next(new Error("Unauthorized"));
+  // return next(new Error("Unauthorized"));
+  return res.json({user: null});
 });
 
 module.exports = router;

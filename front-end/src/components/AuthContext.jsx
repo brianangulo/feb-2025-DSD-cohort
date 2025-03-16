@@ -9,27 +9,40 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const location = useLocation();
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-      if(location.pathname === "/login" || location.pathname === "register") {
-        return;
-      }
-
       api.get('/api/me')
         .then( function (res) {
-          if(res.status) {
+          if(res.data.user) {
             setUser(res.data.user)
-          } else {
-            setUser(null);
-            navigate("/login", { replace: true });
           }
         })
         .catch(() => {
           setUser(null);
-          navigate("/login", { replace: true });
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }, [location]);
+
+    useEffect(() => {
+      if(loading) {
+        return
+      }
+      else if(user && (location.pathname === "/" || location.pathname === "/register")) {
+        navigate("/dashboard", { replace: true });
+      } else if(!user && (location.pathname === "/" || location.pathname === "/register")) {
+        return
+      } else if(!user) {
+        navigate("/", { replace: true });
+      }
+    }, [user, loading])
+
+    if(loading) {
+      return null
+    }
     
     return (
       <AuthContext.Provider value={{ user, setUser }}>

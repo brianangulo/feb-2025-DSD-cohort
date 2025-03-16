@@ -28,8 +28,8 @@ passport.serializeUser( function(user, cb) {
 });
 
 //get user info from database using the stored user id
-passport.deserializeUser( function(userId, cb) {
-  const user = AppDataSource.manager.findOneBy(admin, { id: userId })
+passport.deserializeUser( async function(userId, cb) {
+  const user = await AppDataSource.manager.findOneBy(admin, { id: userId })
   if (!user) {
     cb(new Error("Admin not in session"))
   }
