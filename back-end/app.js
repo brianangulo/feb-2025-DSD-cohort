@@ -40,7 +40,6 @@ app.use(passport.session());
 
 app.use("/users", ensureAuthenticated, usersRouter);
 app.use("/auth", authRouter);
-app.use("/leases", leaseRouter);
 
 app.use("/api/complaints", ensureAuthenticated, complaintsRouter);
 app.use("/api/lease", ensureAuthenticated, leaseRouter);
