@@ -72,7 +72,7 @@ router.get("/:apartmentId", async (req, res, next) => {
     }
 
     const apartmentInformation = {
-      apartmentAddress: "1600 Pennsylvania Avenue NW, Washington, DC 20500",
+      apartmentAddress: "1600 Pennsylvania Avenue NW, Washington, DC, 20500",
       apartmentNumber: apartment.apartment_number,
       leaseStartDate: leaseInformation ? new Date(leaseInformation.lease_start_date).toLocaleDateString("en") : "",
       leaseEndDate: leaseInformation ? new Date(leaseInformation.lease_end_date).toLocaleDateString("en") : "",
