@@ -1,10 +1,10 @@
 import js from "@eslint/js";
-import globals from "globals";
+import configPrettier from "eslint-config-prettier";
+import prettier from "eslint-plugin-prettier";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import prettier from "eslint-plugin-prettier";
-import configPrettier from "eslint-config-prettier";
+import globals from "globals";
 
 export default [
   { ignores: ["dist"] },
@@ -37,6 +37,7 @@ export default [
         { allowConstantExport: true },
       ],
       "prettier/prettier": "error",
+      "react/prop-types": "off",
     },
   },
   configPrettier,
