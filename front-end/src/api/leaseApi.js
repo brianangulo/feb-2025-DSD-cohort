@@ -27,7 +27,7 @@ export async function fetchPending() {
   }
 }
 
-export async function fetchLease(leaseId) {
+export async function fetchLeaseDetails(leaseId) {
   try {
     const result = await api.get(`/api/lease/${leaseId}`);
     return result.data;

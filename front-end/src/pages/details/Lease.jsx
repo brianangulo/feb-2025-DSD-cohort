@@ -2,7 +2,7 @@ import { Box, Grid2, Button } from "@mui/material";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { fetchLease } from "../../api/leaseApi";
+import { fetchLeaseDetails } from "../../api/leaseApi";
 import Spinner from "../../components/Spinner";
 import LeaseDetailsHeader from "../../components/leaseDetails/LeaseDetailsHeader";
 import LeaseApartmentDetails from "../../components/leaseDetails/LeaseApartmentDetails";
@@ -18,7 +18,7 @@ const Lease = () => {
   useEffect(() => {
     async function fetchLeaseInfo() {
       try {
-        const lease = await fetchLease(id);
+        const lease = await fetchLeaseDetails(id);
         setLease(lease);
       } catch (err) {
         return err;
@@ -32,11 +32,9 @@ const Lease = () => {
   }
 
   return (
-    <Box
-      sx={{ display: "flex", flexDirection: "column", minHeight: "90vh", p: 2 }}
-    >
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "90vh", p: 2 }}>
       <Button
-        component={Link} 
+        component={Link}
         to={`/lease-details/${id}`}
         variant="contained"
         sx={{ display: "flex", marginLeft: "auto", marginBottom: "5px", width: "15%", p: 1 }}
@@ -58,10 +56,7 @@ const Lease = () => {
         <LeaseTenantDetails tenant={lease.tenantInformation} />
       </Box>
 
-      <LeaseDuration
-        startDate={lease.leaseStartDate}
-        endDate={lease.leaseEndDate}
-      />
+      <LeaseDuration startDate={lease.leaseStartDate} endDate={lease.leaseEndDate} />
 
       <LeaseRent rent={lease.monthlyRent} />
     </Box>
