@@ -20,6 +20,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { createLease } from "../api/leaseApi";
+import { createNewTenant } from "../api/tenantApi";
+import toast from "react-hot-toast";
 
 const darkTheme = createTheme({
   palette: {
@@ -31,9 +33,10 @@ const darkTheme = createTheme({
 
 // Zod schema for tenant details
 const tenantSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
   email: z.string().email("Invalid email").min(1, "Email is required"),
-  phone: z
+  phoneNumber: z
     .string()
     .min(10, "Phone number is required")
     .max(15, "Phone number is too long"),
@@ -44,7 +47,7 @@ const leaseSchema = z
   .object({
     leaseStartDate: z.date({ message: "Start date is required" }),
     leaseEndDate: z.date({ message: "End date is required" }),
-    rentAmount: z
+    rent: z
       .number()
       .min(1, "Rent amount is required")
       .or(z.string().transform((val) => Number(val))),
@@ -66,11 +69,12 @@ const CreateLease = () => {
   } = useForm({
     resolver: zodResolver(tenantSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       additionalInfo: "",
-      dob: "",
+      dateOfBirth: "",
     },
   });
 
@@ -84,7 +88,7 @@ const CreateLease = () => {
     defaultValues: {
       leaseStartDate: null,
       leaseEndDate: null,
-      rentAmount: 0,
+      rent: 0,
       apartmentNumber: "",
       notes: "",
     },
@@ -104,12 +108,34 @@ const CreateLease = () => {
     setFormData((prevData) => ({ ...prevData, ...data }));
     setActiveStep((prevStep) => prevStep + 1);
 
-    const response = await createLease(data);
+    //create Tenant
 
-    if (response.status === 200) {
-      alert("Lease created successfully!");
-    } else {
-      alert("Error creating lease");
+    try {
+      const responseTenant = await createNewTenant(formData);
+      console.log(responseTenant);
+      if (responseTenant.status === 200) {
+        toast.success(
+          `Tenant ${responseTenant.data.first_name} created successfully!`
+        );
+
+        const tenantId = responseTenant.data.id;
+
+        //create Lease
+        const responseLease = await createLease(data, tenantId);
+        console.log(responseLease);
+
+        if (responseLease.status === 200) {
+          toast.success(
+            `Lease for ${responseLease.data.apartment_number} created successfully!`
+          );
+        } else {
+          toast.error(`${responseLease.data.message}`);
+        }
+      } else {
+        toast.error(`${responseTenant.message}`);
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again", error);
     }
   };
 
@@ -137,12 +163,20 @@ const CreateLease = () => {
               Tenant Details
             </Typography>
             <TextField
-              label="Name"
+              label="First Name"
               fullWidth
               margin="dense"
-              {...registerTenant("name")}
-              error={!!tenantErrors.name}
-              helperText={tenantErrors.name?.message}
+              {...registerTenant("firstName")}
+              error={!!tenantErrors.firstName}
+              helperText={tenantErrors.firstName?.message}
+            />
+            <TextField
+              label="Last Name"
+              fullWidth
+              margin="dense"
+              {...registerTenant("lastName")}
+              error={!!tenantErrors.lastName}
+              helperText={tenantErrors.lastName?.message}
             />
             <TextField
               label="Email"
@@ -157,23 +191,23 @@ const CreateLease = () => {
               label="Phone"
               fullWidth
               margin="dense"
-              {...registerTenant("phone")}
-              error={!!tenantErrors.phone}
-              helperText={tenantErrors.phone?.message}
+              {...registerTenant("phoneNumber")}
+              error={!!tenantErrors.phoneNumber}
+              helperText={tenantErrors.phoneNumber?.message}
             />
 
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Date of Birth"
-                value={formData.dob || null}
+                value={formData.dateOfBirth || null}
                 onChange={(newValue) =>
-                  setFormData({ ...formData, dob: newValue })
+                  setFormData({ ...formData, dateOfBirth: newValue })
                 }
                 sx={{ width: "100%" }}
                 slotProps={{
                   textField: {
-                    error: !!leaseErrors.dob,
-                    helperText: leaseErrors.dob?.message,
+                    error: !!leaseErrors.dateOfBirth,
+                    helperText: leaseErrors.dateOfBirth?.message,
                     fullWidth: true,
                     margin: "normal",
                   },
@@ -260,11 +294,11 @@ const CreateLease = () => {
               fullWidth
               margin="normal"
               type="number"
-              {...registerLease("rentAmount", {
+              {...registerLease("rent", {
                 setValueAs: (value) => parseFloat(value) || 0,
               })}
-              error={!!leaseErrors.rentAmount}
-              helperText={leaseErrors.rentAmount?.message}
+              error={!!leaseErrors.rent}
+              helperText={leaseErrors.rent?.message}
             />
             <TextField
               label="Apartment Number"

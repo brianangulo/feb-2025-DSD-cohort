@@ -10,6 +10,7 @@ export async function fetchRenewals() {
 }
 export async function createLease(data) {
   try {
+    console.log(data);
     const result = await api.post("/api/lease/new-lease", data);
 
     return result.data;

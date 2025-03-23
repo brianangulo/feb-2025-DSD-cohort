@@ -5,7 +5,9 @@ const { determineLeaseStatus } = require("../utilis/determineLeaseStatus");
 const Apartment = require("../database/entities/apartment");
 
 const AppDataSource = require("../database/data-source");
-const { calculateLeaseExpiration } = require("../utilis/calculateLeaseExpiration");
+const {
+  calculateLeaseExpiration,
+} = require("../utilis/calculateLeaseExpiration");
 
 router.get("/renewals", async (req, res, next) => {
   try {
@@ -16,7 +18,7 @@ router.get("/renewals", async (req, res, next) => {
     if (currentLeases.length === 0) {
       return res.status(200).json([]);
     }
-    const renewableLeases = currentLeases.map(lease => {
+    const renewableLeases = currentLeases.map((lease) => {
       const { apartment } = lease;
       const { tenant } = lease;
 
@@ -52,7 +54,7 @@ router.get("/pendingLeases", async (req, res, next) => {
       return res.status(200).json([]);
     }
     const pendingLeases = currentLeases
-      .map(lease => {
+      .map((lease) => {
         const { apartment } = lease;
         const { tenant } = lease;
 
@@ -63,10 +65,12 @@ router.get("/pendingLeases", async (req, res, next) => {
             apartmentId: apartment.id,
             apartmentNumber: apartment.apartment_number,
             tenantName: `${tenant.first_name} ${tenant.last_name}`,
-            leaseEnd: new Date(lease.lease_end_date).toLocaleDateString("en-US"),
+            leaseEnd: new Date(lease.lease_end_date).toLocaleDateString(
+              "en-US"
+            ),
           };
       })
-      .filter(lease => lease !== undefined);
+      .filter((lease) => lease !== undefined);
 
     if (pendingLeases.length === 0) {
       return res.status(200).json([]);
@@ -129,7 +133,9 @@ router.put("/signLease/:leaseId", async (req, res, next) => {
     const leaseId = req.params.leaseId;
     const { signature } = req.body;
 
-    const signedLease = await AppDataSource.manager.findOneBy(Lease, { id: leaseId });
+    const signedLease = await AppDataSource.manager.findOneBy(Lease, {
+      id: leaseId,
+    });
 
     if (!signedLease) {
       return next(new Error("Lease not found."));
@@ -180,23 +186,34 @@ router.post("/", async (req, res, next) => {
 
     await AppDataSource.manager.save(Lease, newLease);
 
-    return res.status(200);
+    return res.status(200).json({
+      message: "lease created successfully",
+      newLease,
+    });
   } catch (err) {
     return next(new Error(err));
   }
 });
 
 router.post("/new-lease", async (req, res, next) => {
+  console.log("new lease");
   const leaseData = req.body;
-  const apartmentId = req.body.apartmentId;
+  // const apartmentNo = req.body.apartmentNumber;
+  console.log(leaseData);
 
   const fetchedApartment = await AppDataSource.manager.findOne(Apartment, {
-    where: { id: apartmentId },
+    where: { apartment_number: leaseData.apartmentNumber },
     relations: ["lease"],
   });
 
+  if (!fetchedApartment) {
+    return res.status(400).json({
+      message: "apartment not found try again",
+    });
+  }
+
   if (fetchedApartment.lease.length !== 0) {
-    return res.status(200).json({
+    return res.status(400).json({
       message: "apartment already has a lease try again",
     });
   }
@@ -207,7 +224,7 @@ router.post("/new-lease", async (req, res, next) => {
   const leaseEnd = new Date(leaseData.leaseEndDate);
 
   if (leaseEnd < leaseStart) {
-    return res.status(200).json({
+    return res.status(400).json({
       message: "lease end dates start before the start date try again",
     });
   }
@@ -218,13 +235,15 @@ router.post("/new-lease", async (req, res, next) => {
       lease_end_date: leaseData.leaseEndDate,
       monthly_rent_in_dollars: leaseData.rent,
       notes: leaseData.notes,
-      apartment_id: leaseData.apartmentId,
+      apartment_id: fetchedApartment.id,
       tenant_id: leaseData.tenantId,
     };
 
     await AppDataSource.manager.save(Lease, newLease);
 
-    return res.status(200);
+    return res.status(200).json({
+      message: "lease created successfully",
+    });
   } catch (err) {
     return next(err);
   }
