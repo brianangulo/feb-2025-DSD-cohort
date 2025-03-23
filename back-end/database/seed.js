@@ -189,6 +189,33 @@ AppDataSource.initialize()
           phone_number: "444-333-2222",
           additional_information: "Prefers ground floor units",
         },
+        {
+          id: 4,
+          first_name: "Olivia",
+          last_name: "Brown",
+          email: "test@test.com",
+          date_of_birth: "1995-12-25",
+          phone_number: "555-555-5555",
+          additional_information: "No pets",
+        },
+        {
+          id: 5,
+          first_name: "James",
+          last_name: "Williams",
+          email: "james@gmail.com",
+          date_of_birth: "1990-01-15",
+          phone_number: "555-555-5555",
+          additional_information: "No pets",
+        },
+        {
+          id: 6,
+          first_name: "Sophia",
+          last_name: "Jones",
+          email: "sophia@gmail.com",
+          date_of_birth: "1990-01-15",
+          phone_number: "555-555-5555",
+          additional_information: "No pets",
+        },
       ]);
       console.log("✅ Tenant table seeded.");
     } else {

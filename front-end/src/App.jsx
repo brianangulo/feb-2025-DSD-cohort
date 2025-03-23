@@ -35,6 +35,7 @@ function App() {
           <Route path="settings" element={<SettingsPage />}></Route>
           <Route path="apartment-details/:id" element={<ApartmentDetails />}></Route>
           <Route path="lease-details/:id" element={<LeaseDetails />}></Route>
+          <Route path="lease/:id" element={<Lease />}></Route>
           <Route path="tenant-details/:id" element={<TenantDetails />}></Route>
           <Route path="complaint-details/:id" element={<ComplaintDetails />}></Route>
         </Route>

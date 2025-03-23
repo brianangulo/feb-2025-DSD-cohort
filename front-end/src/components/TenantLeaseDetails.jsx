@@ -1,6 +1,7 @@
 import React from "react";
 import { CardContent, Typography, Card, Grid2 } from "@mui/material";
 import PropTypes from "prop-types";
+import { Link } from "react-router";
 
 const TenantLeaseDetails = ({ tenant }) => {
   return (
@@ -12,7 +13,12 @@ const TenantLeaseDetails = ({ tenant }) => {
         <CardContent className="p-4 space-y-3 text-center text-xl-1 font-semi-bold text-gray-800">
           <Grid2 container spacing={2} padding={2}>
             <Grid2 size={{ xs: 12, md: 6 }}>
-              <p>Apartment Number: {tenant.apartment.apartmentNumber}</p>
+              <p>
+                Apartment Number:
+                <Link className="underline" to={`/apartment-details/${tenant.apartment.apartmentId}`}>
+                  {tenant.apartment.apartmentNumber}
+                </Link>
+              </p>
               <p>Monthly Rent: {tenant.leaseInformation.rentAmount}</p>
               <p>Additional Info:{tenant.leaseInformation.notes}</p>
             </Grid2>

@@ -3,18 +3,44 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Button, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Spinner from "../Spinner";
-//Defining the columns
+import { Link } from "react-router";
+
 const columns = [
-  { field: "apartmentNumber", headerName: "Apt. #", flex: 1, minWidth: 150 },
-  { field: "tenantName", headerName: "Tenant Name", flex: 2, minWidth: 150 },
+  {
+    field: "apartmentNumber",
+    headerName: "Apt. #",
+    flex: 1,
+    minWidth: 150,
+    renderCell: (params) => (
+      <Link to={`/apartment-details/${params.row.apartmentId}`} className="underline">
+        {params.row.apartmentNumber}
+      </Link>
+    ),
+  },
+  {
+    field: "tenantName",
+    headerName: "Tenant Name",
+    flex: 2,
+    minWidth: 150,
+    renderCell: (params) => (
+      <Link to={`/tenant-details/${params.row.tenantId}`} className="underline">
+        {params.row.tenantName}
+      </Link>
+    ),
+  },
   { field: "leaseEnd", headerName: "Lease End", flex: 2, minWidth: 150 },
   {
     field: "leaseStatus",
     headerName: "Status",
     flex: 2,
     width: 150,
-    renderCell: () => (
-      <Button variant="contained" color="warning">
+    renderCell: (params) => (
+      <Button
+        component={Link}
+        to={`/lease/${params.row.leaseId}`}
+        variant="contained"
+        color="warning"
+      >
         Pending
       </Button>
     ),

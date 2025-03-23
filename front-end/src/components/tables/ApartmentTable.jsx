@@ -9,10 +9,10 @@ const columns = [
     headerName: "Apt #",
     flex: 1,
     minWidth: 120,
-    renderCell: params => (
-      <a href={`/apartment-details/${params.row.id}`} className="underline">
+    renderCell: (params) => (
+      <Link to={`/apartment-details/${params.row.id}`} className="underline">
         {params.row.apartmentNumber}
-      </a>
+      </Link>
     ),
   },
   {
@@ -20,24 +20,27 @@ const columns = [
     headerName: "Tenant Name",
     flex: 2,
     minWidth: 200,
-    renderCell: params => (
-      <a href={`/tenant-details/${params.row.tenantId}`} className="underline">
-        {params.row.tenantName}
-      </a>
-    ),
+    renderCell: (params) =>
+      params.row.tenantName === "Vacant" ? (
+        <span>{params.row.tenantName}</span>
+      ) : (
+        <Link to={`/tenant-details/${params.row.tenantId}`} className="underline">
+          {params.row.tenantName}
+        </Link>
+      ),
   },
   {
     field: "leaseStatus",
     headerName: "Lease Status",
     flex: 1,
     minWidth: 120,
-    renderCell: params =>
+    renderCell: (params) =>
       params.row.leaseStatus === "Vacant" ? (
         <span>{params.row.leaseStatus}</span>
       ) : (
-        <a href={`/lease-details/${params.row.leaseId}`} className="underline">
+        <Link to={`/lease/${params.row.leaseId}`} className="underline">
           {params.row.leaseStatus}
-        </a>
+        </Link>
       ),
   },
   {
@@ -61,7 +64,7 @@ const columns = [
     minWidth: 200,
     disableColumnMenu: true,
     // Customizes the content of this column based on lease status
-    renderCell: params => {
+    renderCell: (params) => {
       const leaseEndDate = new Date(params.row.leaseEnd);
       const today = new Date();
       const daysUntilEnd = (leaseEndDate - today) / (1000 * 60 * 60 * 24);
@@ -69,11 +72,21 @@ const columns = [
       return (
         <div className="flex justify-center items-center gap-2 h-full">
           {params.row.leaseStatus === "Vacant" ? (
-            <Button component={Link} to={`/leases/${params.row.leaseId}`} color="primary" variant="contained">
+            <Button
+              component={Link}
+              to={"/create-lease"}
+              color="primary"
+              variant="contained"
+            >
               Create Lease
             </Button>
           ) : daysUntilEnd < 30 ? (
-            <Button component={Link} to={`/leases/${params.row.leaseId}`} color="warning" variant="contained">
+            <Button
+              component={Link}
+              to={"/create-lease"}
+              color="warning"
+              variant="contained"
+            >
               Renew Lease
             </Button>
           ) : null}

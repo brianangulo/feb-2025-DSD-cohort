@@ -26,3 +26,12 @@ export async function fetchPending() {
     return err;
   }
 }
+
+export async function fetchLease(leaseId) {
+  try {
+    const result = await api.get(`/api/lease/${leaseId}`);
+    return result.data;
+  } catch (err) {
+    return err;
+  }
+}

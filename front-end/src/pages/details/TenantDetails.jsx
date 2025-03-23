@@ -11,7 +11,6 @@ const TenantDetails = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    console.log("useEffect");
     async function fetchTenantInfo() {
       try {
         const tenant = await fetchTenantInformation(id);
@@ -24,7 +23,7 @@ const TenantDetails = () => {
   }, [id]);
 
   if (!tenant) {
-    <Spinner />;
+    return <Spinner />;
   }
 
   return (

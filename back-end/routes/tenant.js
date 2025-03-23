@@ -63,4 +63,35 @@ router.get("/:tenantId", async (req, res, next) => {
   }
 });
 
+router.post("/", async (req, res, next) => {
+  const tenantDetails = req.body;
+
+  if (!tenantDetails) {
+    return res.status(200).json("no data found");
+  }
+
+  const foundTenant = await AppDataSource.manager.findOne(Tenant, { where: { email: tenantDetails.email } });
+
+  if (foundTenant) {
+    return res.status(200).json({ message: "tenant already exists" });
+  }
+
+  try {
+    const newTenant = {
+      first_name: tenantDetails.firstName,
+      last_name: tenantDetails.lastName,
+      email: tenantDetails.email,
+      date_of_birth: tenantDetails.dateOfBirth,
+      phone_number: tenantDetails.phoneNumber || "",
+      additional_information: tenantDetails.additionalInformation || "",
+    };
+
+    await AppDataSource.manager.save(Tenant, newTenant);
+
+    return res.status(200);
+  } catch (error) {
+    return next(error);
+  }
+});
+
 module.exports = router;

@@ -2,11 +2,32 @@ import React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button, Paper, Typography } from "@mui/material";
 import Spinner from "../Spinner";
+import { Link } from "react-router";
 
 //Defining the columns
 const columns = [
-  { field: "apartmentNumber", headerName: "Apt. #", flex: 1, minWidth: 150 },
-  { field: "tenantName", headerName: "Tenant Name", flex: 2, minWidth: 150 },
+  {
+    field: "apartmentNumber",
+    headerName: "Apt. #",
+    flex: 1,
+    minWidth: 150,
+    renderCell: (params) => (
+      <a href={`/apartment-details/${params.row.apartmentId}`} className="underline">
+        {params.row.apartmentNumber}
+      </a>
+    ),
+  },
+  {
+    field: "tenantName",
+    headerName: "Tenant Name",
+    flex: 2,
+    minWidth: 150,
+    renderCell: (params) => (
+      <a href={`/tenant-details/${params.row.tenantId}`} className="underline">
+        {params.row.tenantName}
+      </a>
+    ),
+  },
   { field: "leaseEnd", headerName: "Lease End", flex: 2, minWidth: 150 },
   {
     field: "leaseStatus",
@@ -14,7 +35,12 @@ const columns = [
     flex: 2,
     width: 150,
     renderCell: () => (
-      <Button variant="contained" color="warning">
+      <Button
+        component={Link}
+        to={"/create-lease"}
+        color="warning"
+        variant="contained"
+      >
         Renew
       </Button>
     ),
