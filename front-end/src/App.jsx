@@ -4,8 +4,10 @@ import EnsureGuest from "./auth/EnsureGuest";
 import RootLayout from "./layouts/RootLayout";
 import AccessControlPage from "./pages/AccessControlPage";
 import Complaints from "./pages/Complaints";
+import CreateLeasePage from "./pages/CreateLeasePage";
 import Dashboard from "./pages/Dashboard";
 import HomePageLogin from "./pages/HomePageLogin";
+import LeaseView from "./pages/LeaseView";
 import NotFoundPage from "./pages/NotFoundPage";
 import Register from "./pages/Register";
 import SettingsPage from "./pages/SettingsPage";
@@ -13,8 +15,6 @@ import ApartmentDetails from "./pages/details/ApartmentDetails";
 import ComplaintDetails from "./pages/details/ComplaintDetails";
 import LeaseDetails from "./pages/details/LeaseDetails";
 import TenantDetails from "./pages/details/TenantDetails";
-import CreateLeasePage from "./pages/CreateLease";
-import LeaseView from "./pages/LeaseView";
 
 function App() {
   return (
