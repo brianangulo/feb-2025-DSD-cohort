@@ -11,7 +11,6 @@ export async function fetchRenewals() {
 export async function createLease(data) {
   try {
     const result = await api.post("/api/lease/new-lease", data);
-
     return result.data;
   } catch (err) {
     return err;

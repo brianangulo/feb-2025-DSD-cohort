@@ -5,9 +5,7 @@ const { determineLeaseStatus } = require("../utilis/determineLeaseStatus");
 const Apartment = require("../database/entities/apartment");
 const Tenant = require("../database/entities/tenant");
 const AppDataSource = require("../database/data-source");
-const {
-  calculateLeaseExpiration,
-} = require("../utilis/calculateLeaseExpiration");
+const { calculateLeaseExpiration } = require("../utilis/calculateLeaseExpiration");
 
 router.get("/renewals", async (req, res, next) => {
   try {
@@ -19,7 +17,7 @@ router.get("/renewals", async (req, res, next) => {
       return res.status(200).json([]);
     }
     const renewableLeases = currentLeases
-      .map((lease) => {
+      .map(lease => {
         const { apartment } = lease;
         const { tenant } = lease;
 
@@ -34,7 +32,7 @@ router.get("/renewals", async (req, res, next) => {
           };
         }
       })
-      .filter((lease) => lease !== undefined);
+      .filter(lease => lease !== undefined);
 
     if (renewableLeases.length === 0) {
       return res.status(200).json([]);
@@ -56,7 +54,7 @@ router.get("/pendingLeases", async (req, res, next) => {
       return res.status(200).json([]);
     }
     const pendingLeases = currentLeases
-      .map((lease) => {
+      .map(lease => {
         const { apartment } = lease;
         const { tenant } = lease;
 
@@ -67,12 +65,10 @@ router.get("/pendingLeases", async (req, res, next) => {
             apartmentId: apartment.id,
             apartmentNumber: apartment.apartment_number,
             tenantName: `${tenant.first_name} ${tenant.last_name}`,
-            leaseEnd: new Date(lease.lease_end_date).toLocaleDateString(
-              "en-US"
-            ),
+            leaseEnd: new Date(lease.lease_end_date).toLocaleDateString("en-US"),
           };
       })
-      .filter((lease) => lease !== undefined);
+      .filter(lease => lease !== undefined);
 
     if (pendingLeases.length === 0) {
       return res.status(200).json([]);
@@ -244,6 +240,7 @@ router.post("/new-lease", async (req, res, next) => {
   const leaseData = req.body;
   const apartmentId = req.body.apartmentId;
 
+  console.log("leaseData", leaseData);
   if (leaseData.leaseId) {
     await AppDataSource.manager.update(Lease, leaseData.leaseId, {
       lease_start_date: leaseData.leaseStartDate,
@@ -256,14 +253,16 @@ router.post("/new-lease", async (req, res, next) => {
     });
   }
 
-  const {
-    first_name,
-    last_name,
-    email,
-    date_of_birth,
-    phone_number,
-    additional_information,
-  } = leaseData;
+  const { first_name, last_name, email, date_of_birth, phone_number, additional_information } = leaseData;
+
+  const tenant = await AppDataSource.manager.findOne(Tenant, {
+    where: { email },
+  });
+
+  console.log("tenant", tenant);
+  if (tenant !== null) {
+    return next(new Error("tenant already exists with that email"));
+  }
 
   const newTenant = await AppDataSource.manager.save(Tenant, {
     first_name,
@@ -280,18 +279,14 @@ router.post("/new-lease", async (req, res, next) => {
   });
 
   if (fetchedApartment.lease.length !== 0) {
-    return res.status(400).json({
-      message: "apartment already has a lease try again",
-    });
+    return next(new Error("apartment already has a lease try again"));
   }
 
   const leaseStart = new Date(leaseData.leaseStartDate);
   const leaseEnd = new Date(leaseData.leaseEndDate);
 
   if (leaseEnd < leaseStart) {
-    return res.status(400).json({
-      message: "lease end dates start before the start date try again",
-    });
+    return next(new Error("lease end dates start before the start date try again"));
   }
 
   try {

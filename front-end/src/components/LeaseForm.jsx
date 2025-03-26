@@ -11,23 +11,21 @@ import { z } from "zod";
 import { createLease } from "../api/leaseApi";
 import Spinner from "../components/Spinner";
 
+import { useNavigate } from "react-router";
 const leaseSchema = z.object({
-  lease_start_date: z
-    .date({ required_error: "Lease start date is required." })
-    .refine((date) => !isNaN(date.getTime()), {
-      message: "Please select a valid date",
-    }),
-  lease_end_date: z
-    .date({ required_error: "Lease end date is required." })
-    .refine((date) => !isNaN(date.getTime()), {
-      message: "Please select a valid date",
-    }),
-  monthly_rent_in_dollars: z.string().transform((val) => Number(val)),
+  lease_start_date: z.date({ required_error: "Lease start date is required." }).refine(date => !isNaN(date.getTime()), {
+    message: "Please select a valid date",
+  }),
+  lease_end_date: z.date({ required_error: "Lease end date is required." }).refine(date => !isNaN(date.getTime()), {
+    message: "Please select a valid date",
+  }),
+  monthly_rent_in_dollars: z.string().transform(val => Number(val)),
   notes: z.string().max(100).optional(),
-  apartment_id: z.string().transform((val) => Number(val)),
+  apartment_id: z.string().transform(val => Number(val)),
 });
 
 const LeaseForm = ({ setActiveStep, tenantFormData, apartmentId }) => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -41,20 +39,39 @@ const LeaseForm = ({ setActiveStep, tenantFormData, apartmentId }) => {
     resolver: zodResolver(leaseSchema),
   });
 
+  console.log("step 2", tenantFormData);
   const { mutate } = useMutation({
-    mutationFn: (data) => createLease(data),
+    mutationFn: async data => {
+      try {
+        const response = await createLease(data);
+        if (response.status === 200) {
+          toast.success("Lease created successfully");
+          navigate(`/lease-details/${response.data.id}`);
+        } else {
+          toast.error(response.response.data.message);
+
+          console.log("inside else mthod");
+          setActiveStep(0);
+        }
+      } catch (error) {
+        setActiveStep(0);
+        toast.error(error.message || "An error occurred. Please try again");
+      }
+    },
+    onError: error => {
+      console.log("on oeerror occured");
+      toast.error(error.message || "An error occurred. Please try again");
+      setActiveStep(0);
+    },
     onMutate: () => {
       return <Spinner />;
     },
     onSuccess: () => {
-      setActiveStep((prevStep) => prevStep + 1);
-    },
-    onError: (error) => {
-      toast.error(error.message || "An error occurred. Please try again");
+      setActiveStep(prevStep => prevStep + 1);
     },
   });
 
-  const onSubmit = async (leaseFormData) => {
+  const onSubmit = async leaseFormData => {
     mutate({ ...tenantFormData, ...leaseFormData });
   };
 
@@ -78,14 +95,12 @@ const LeaseForm = ({ setActiveStep, tenantFormData, apartmentId }) => {
                   className="w-full"
                   disablePast
                   value={field.value || null}
-                  onChange={(date) => field.onChange(date)}
-                  renderInput={(params) => <TextField {...params} fullWidth />}
+                  onChange={date => field.onChange(date)}
+                  renderInput={params => <TextField {...params} fullWidth />}
                 />
               )}
             />
-            <p className="text-xs text-red-700 mt-1.5">
-              {errors.lease_start_date?.message}
-            </p>
+            <p className="text-xs text-red-700 mt-1.5">{errors.lease_start_date?.message}</p>
           </Grid2>
           <Grid2 item xs={6} size={6}>
             <Controller
@@ -98,13 +113,11 @@ const LeaseForm = ({ setActiveStep, tenantFormData, apartmentId }) => {
                   disablePast
                   className="w-full"
                   value={field.value || null}
-                  onChange={(date) => field.onChange(date)}
+                  onChange={date => field.onChange(date)}
                 />
               )}
             />
-            <p className="text-xs text-red-700 mt-1.5">
-              {errors.lease_start_date?.message}
-            </p>
+            <p className="text-xs text-red-700 mt-1.5">{errors.lease_start_date?.message}</p>
           </Grid2>
         </Grid2>
       </LocalizationProvider>
@@ -128,12 +141,7 @@ const LeaseForm = ({ setActiveStep, tenantFormData, apartmentId }) => {
         helperText={errors.notes?.message}
       />
       <Box sx={{ textAlign: "right", paddingTop: 1, paddingRight: 2 }}>
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={isSubmitting || Object.keys(errors).length > 0}
-          endIcon={<SendIcon />}
-        >
+        <Button type="submit" variant="contained" disabled={isSubmitting || Object.keys(errors).length > 0} endIcon={<SendIcon />}>
           {isSubmitting ? "Submitting..." : "Send Lease"}
         </Button>
       </Box>

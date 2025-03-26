@@ -1,12 +1,4 @@
-import {
-  Box,
-  Grid2,
-  LinearProgress,
-  Paper,
-  Step,
-  StepLabel,
-  Stepper,
-} from "@mui/material";
+import { Box, Grid2, LinearProgress, Paper, Step, StepLabel, Stepper } from "@mui/material";
 import { useState } from "react";
 import { useParams } from "react-router";
 import LeaseForm from "../components/LeaseForm";
@@ -17,25 +9,16 @@ const CreateLease = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [tenantFormData, setTenantFormData] = useState({});
 
+  console.log("active step", activeStep);
   const steps = ["Enter Tenant Details", "Enter Lease Details"];
 
   const renderFormStep = () => {
     switch (activeStep) {
       case 0:
-        return (
-          <TenantForm
-            setActiveStep={setActiveStep}
-            setTenantFormData={setTenantFormData}
-          />
-        );
+        return <TenantForm setActiveStep={setActiveStep} setTenantFormData={setTenantFormData} />;
       case 1:
         return (
-          <LeaseForm
-            setActiveStep={setActiveStep}
-            setTenantFormData={setTenantFormData}
-            tenantFormData={tenantFormData}
-            apartmentId={apartmentId}
-          />
+          <LeaseForm setActiveStep={setActiveStep} setTenantFormData={setTenantFormData} tenantFormData={tenantFormData} apartmentId={apartmentId} />
         );
       default:
         return null;
@@ -60,11 +43,7 @@ const CreateLease = () => {
               </Step>
             ))}
           </Stepper>
-          <LinearProgress
-            variant="determinate"
-            value={(activeStep / steps.length) * 100}
-            sx={{ marginBottom: 2, marginTop: 2 }}
-          />
+          <LinearProgress variant="determinate" value={(activeStep / steps.length) * 100} sx={{ marginBottom: 2, marginTop: 2 }} />
           {renderFormStep()}
         </Paper>
       </Grid2>

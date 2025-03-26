@@ -19,9 +19,6 @@ const Lease = () => {
   useEffect(() => {
     async function fetchLeaseInfo() {
       try {
-        // if (location.state && location.state.message) {
-        //   toast.success("Lease signed successfully");
-        // }
         const lease = await fetchLeaseDetails(id);
         if (lease?.response?.data?.message === "Lease not found.") {
           return navigate("/not-found");

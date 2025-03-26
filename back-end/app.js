@@ -44,7 +44,7 @@ app.use("/users", ensureAuthenticated, usersRouter);
 app.use("/auth", authRouter);
 
 app.use("/api/complaints", ensureAuthenticated, complaintsRouter);
-app.use("/api/lease", ensureAuthenticated, leaseRouter);
+app.use("/api/lease", leaseRouter);
 app.use("/api/tenant", ensureAuthenticated, tenantRouter);
 app.use("/api/apartment", ensureAuthenticated, apartmentRouter);
 
@@ -55,9 +55,7 @@ app.listen(4000, () => {
 });
 
 function errorHandler(err, req, res, next) {
-  return res
-    .status(res.statusCode !== 200 ? res.statusCode : 500)
-    .json({ message: err.message });
+  return res.status(res.statusCode !== 200 ? res.statusCode : 500).json({ message: err.message });
 }
 
 function ensureAuthenticated(req, res, next) {
